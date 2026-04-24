@@ -1,0 +1,23 @@
+name: Trigger Test Generation
+
+on:
+  pull_request:
+  push:
+    
+jobs:
+  trigger-b:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call Submission Repository workflow
+        run: |
+          curl -X POST \
+          -H "Authorization: token ${{ secrets.REPO_B_TOKEN }}" \
+          -H "Accept: application/vnd.github+json" \
+          https://api.github.com/repos/OWNER/REPO_B/actions/workflows/main.yml/dispatches \
+          -d '{
+            "ref":"main",
+            "inputs":{
+              "repoA":"${{ github.repository }}",
+              "pr_number":"${{ github.event.pull_request.number }}"
+            }
+          }'
